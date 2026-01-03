@@ -2,16 +2,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copiar dependencias
+# Copiamos requirements
 COPY requirements.txt .
 
+# Instalamos dependencias (cryptography incluido)
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el código
-COPY scripts/ scripts/
-COPY models/ models/
-COPY reports/ reports/
-COPY data/ data/
+# Copiamos el código
+COPY . .
 
-# Ejecutar training y scoring en secuencia
-CMD ["bash", "-c", "python scripts/training.py && python scripts/scoring.py"]
+# Comando por defecto (docker-compose lo sobreescribe)
+CMD ["python", "scripts/training.py"]

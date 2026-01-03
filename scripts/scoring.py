@@ -2,7 +2,6 @@ import pandas as pd
 from sqlalchemy import create_engine
 import joblib
 import os
-
 from sklearn.metrics import mean_squared_error, r2_score
 
 # -----------------------------
@@ -12,21 +11,27 @@ from sklearn.metrics import mean_squared_error, r2_score
 #     "mysql+pymysql://root:123456@localhost:3306/medlife_db"
 # )
 
-import os
-from sqlalchemy import create_engine
+# # -----------------------------
+# # 1. Conexión a MySQL
+# # -----------------------------
+# db_host = os.getenv("DB_HOST", "localhost")
 
-# -----------------------------
-# 1. Conexión a MySQL
-# -----------------------------
-db_host = os.getenv("DB_HOST", "localhost")
+# print("DB_HOST usado:", db_host)
 
-print("DB_HOST usado:", db_host)
+# engine = create_engine(
+#     f"mysql+pymysql://root:123456@{db_host}:3306/medlife_db"
+# )
+
+
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = os.getenv("DB_PORT", "3306")
+DB_NAME = os.getenv("DB_NAME", "metlife_db")
+DB_USER = os.getenv("DB_USER", "root")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "root")
 
 engine = create_engine(
-    f"mysql+pymysql://root:123456@{db_host}:3306/medlife_db"
+    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 )
-
-
 
 
 # -----------------------------
