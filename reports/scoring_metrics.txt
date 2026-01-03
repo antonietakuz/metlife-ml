@@ -1,0 +1,3 @@
+Scoring Results
+RMSE: 1682.16
+R2: 0.9734

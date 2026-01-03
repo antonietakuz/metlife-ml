@@ -1,0 +1,4 @@
+Random Forest Regressor - Training Results
+Best Params: {'model__max_depth': 10, 'model__min_samples_split': 5, 'model__n_estimators': 200}
+RMSE: 4497.35
+R2: 0.8697
