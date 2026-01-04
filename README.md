@@ -1,60 +1,122 @@
-# MetLife – Medical Insurance Cost Prediction
+# MetLife – Predicción de Costos Médicos
 
-This repository contains an end-to-end Machine Learning solution developed as part of a technical challenge.  
-The objective is to predict medical insurance costs based on personal and geographic attributes.
+Este repositorio contiene una **solución de Machine Learning de punta a punta**, desarrollada como parte de un desafío técnico.  
+El objetivo es **predecir el costo médico anual** de clientes de seguros de salud a partir de atributos personales y geográficos, utilizando un enfoque reproducible y orientado a producción.
 
----
+El proyecto cubre todo el ciclo de vida del modelo:
 
-## Problem Description
-
-MetLife is an international insurance company that processes thousands of health insurance claims per year.  
-Accurately estimating future medical insurance costs is crucial for financial planning and decision-making.
-
-Using historical data, this project builds a machine learning model to predict annual medical charges based on:
-
-- Age
-- Sex
-- Body Mass Index (BMI)
-- Number of children
-- Smoking status
-- Region
-- Medical charges (target variable)
+- Ingesta de datos  
+- Entrenamiento y evaluación de modelos  
+- Scoring sobre nuevos datos  
+- Persistencia en base de datos relacional  
+- Ejecución containerizada con Docker  
 
 ---
 
-## Modeling Approach
+## Descripción del Problema
 
-Two models were evaluated:
+MetLife es una compañía internacional de seguros que procesa miles de reclamos médicos por año.  
+La estimación precisa de costos médicos futuros es clave para:
 
-- **Linear Regression** (baseline)
-- **Random Forest Regressor** (final model)
+- Planificación financiera  
+- Gestión de riesgos  
+- Análisis de escenarios  
+- Toma de decisiones estratégicas  
 
-The Random Forest model was selected due to its ability to capture non-linear relationships and interactions between variables such as smoking status, age, and BMI.  
-Hyperparameter tuning was performed using `GridSearchCV`.
+A partir de datos históricos, este proyecto construye un modelo predictivo de costos médicos utilizando las siguientes variables:
+
+- **Edad**: edad del asegurado  
+- **Sexo**: género (masculino / femenino)  
+- **BMI**: índice de masa corporal  
+- **Hijos**: número de dependientes  
+- **Fumador**: estado de fumador  
+- **Región**: zona geográfica  
+- **Charges**: costo médico anual (variable objetivo)  
 
 ---
 
-## Data Persistence
+## Enfoque de Modelado
 
-- A **MySQL** database is used for data storage.
-- The dataset is stored in a table named `training_dataset` within the `medlife_db` database.
-- All training and scoring pipelines read directly from the database (no CSV dependency during execution).
+Durante la fase exploratoria se evaluaron dos modelos de regresión supervisada:
+
+- **Regresión Lineal** (modelo base)  
+- **Random Forest Regressor** (modelo final seleccionado)  
+
+El **Random Forest Regressor** fue elegido como modelo final debido a que:
+
+- Captura **relaciones no lineales** entre las variables  
+- Modela **interacciones entre features** (por ejemplo: fumar × edad × BMI)  
+- Es robusto frente a outliers  
+- No requiere escalado de variables  
+- Presenta un muy buen desempeño predictivo con supuestos mínimos  
+
+El ajuste de hiperparámetros se realizó utilizando **GridSearchCV**, optimizando la métrica **RMSE**.
 
 ---
-## How to Run the Project
 
-### 1️. Load data into MySQL
+## Desempeño del Modelo (Entrenamiento)
+
+Sobre el conjunto de test se obtuvieron los siguientes resultados:
+
+- **RMSE**: ~4500  
+- **R²**: ~0.87  
+
+Estos valores indican una buena capacidad explicativa y predictiva para la estimación de costos médicos.
+
+---
+
+## Capa de Persistencia de Datos
+
+- Se utiliza una base de datos **MySQL** como capa de persistencia.  
+- El dataset se almacena en la tabla **`training_dataset`** dentro de la base **`metlife_db`**.  
+- Los pipelines de entrenamiento y scoring **leen directamente desde la base de datos**, evitando dependencias directas con archivos CSV durante la ejecución.  
+
+Este diseño replica un escenario realista de producción donde los datos provienen de un sistema centralizado.
+
+---
+
+## Cómo Ejecutar el Proyecto
+
+### Opción 1: Ejecución Local (Entorno Python)
+
+1. Instalar dependencias:
+```bash
+pip install -r requirements.txt
+```
+
+2. Cargar los datos en MySQL:
 ```bash
 python scripts/load_db.py
+```
 
-### 2. Train the model
+3.Entrenar el modelo:
 ```bash
 python scripts/training.py
+```
 
-###3️. Run scoring
+4. Ejecutar el scoring:
 ```bash
 python scripts/scoring.py
+```
+---
 
+### Opción 2: Ejecución con Docker (Pipeline Completo)
+
+1. Construir la imagen
+```bash
 docker build -t metlife-ml .
+```
 
+2. Ejecutar el pipeline completo
+```bash
 docker run --rm -e DB_HOST=host.docker.internal metlife-ml
+```
+---
+
+
+### Opción 3: Docker Compose
+
+1. Ejecutar todo el sistema con un único comando
+```bash
+docker-compose up --build
+```
